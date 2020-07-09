@@ -65,5 +65,5 @@ EXPOSE 8080
 
 ENV LD_LIBRARY_PATH=.
 COPY *.sh ./
-RUN ls -lisa
+
 CMD ["/bin/bash", "./mc_start.sh"]
