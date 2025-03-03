@@ -15,14 +15,14 @@ FROM base AS mc
 # Download and extract the bedrock server
 RUN if [ "$VERSION" = "latest" ] ; then \
         LATEST_VERSION=$( \
-            curl -v --silent  https://www.minecraft.net/en-us/download/server/bedrock/ 2>&1 | \
-            grep -o 'https://minecraft.azureedge.net/bin-linux/[^"]*' | \
+            curl -v --location --compressed --silent 'https://www.minecraft.net/en-us/download/server/bedrock/' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'User-Agent: d-sch/ws-minecraft-bedrock-server' | \
+            grep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' | \
             sed 's#.*/bedrock-server-##' | sed 's/.zip//') && \
         export VERSION=$LATEST_VERSION && \
         echo "Setting VERSION to $LATEST_VERSION" ; \
     else echo "Using VERSION of $VERSION"; \
     fi && \
-    curl https://minecraft.azureedge.net/bin-linux/bedrock-server-${VERSION}.zip --output ./bedrock-server.zip && \
+    curl https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-${VERSION}.zip -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'User-Agent: d-sch/ws-minecraft-bedrock-server' --output ./bedrock-server.zip && \
     unzip ./bedrock-server.zip -d ${MC_SERVER_DIR} && \
     rm ./bedrock-server.zip
 

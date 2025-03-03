@@ -7,7 +7,7 @@ mkfifo $BEDROCK_SERVER_PIPE_OUT
 mkfifo $BEDROCK_SERVER_PIPE_IN
 
 function _rmpipe() {
-	        rm -rf $PIPE_DIR
+	        rm -Rf $PIPE_DIR
 }
 
 function _trap() {
