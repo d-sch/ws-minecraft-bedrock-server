@@ -1,10 +1,10 @@
 # ws-bedrock-server
 
-Start a Minecraft server (bedrock version) and access server console via websocket using a HTML page.
+Start a Minecraft server (bedrock version) and access server console via WebSocket using a HTML page.
 
 ## Overview
 
-This dockerfile is building a container downloading the latest Minecraft bedrock server for Linux.
+This Dockerfile builds a Docker image by downloading the latest Minecraft bedrock server for Linux.
 
 Inspired by https://www.github.com/toasterlint/minecraft_bedrock
 
@@ -12,82 +12,101 @@ Inspired by https://www.github.com/toasterlint/minecraft_bedrock
 
 ### Install
 
-`mkdir ~/minecraft`
-`mkdir ~/minecraft/config`
-`mkdir ~/minecraft/worlds`
+First prepare some directories used to store your server configuration and the world data
+
+```bash
+mkdir ~/minecraft
+mkdir ~/minecraft/worlds
+mkdir ~/minecraft/servers
+mkdir ~/minecraft/servers/default
+mkdir ~/minecraft/servers/default/config
+```
 
 If you want to start with a new world just skip the next section.
 
-#### From backup
+#### Restore world from backup
 
-Unzip archive (e.g. world.mcworld) into a seprate directory (~/minecraft/worlds/{world}) in the worlds path. 
+Unzip archive (e.g. `world.mcworld`) into a separate directory (`~/minecraft/worlds/##name of your world##`) in the worlds path, e.g.
+```bash
+unzip world.mcworld -d ~/minecraft/worlds/world
+```
 
-`unzip world.mcworld -d ~/minecraft/worlds/world`
+Move `system.properties` file into the server config path (`~/minecraft/server/default/config`)
+```bash
+mv system.properties ~/minecraft/server/default/config/
+```
 
-Copy `system.properties` file into the server config path (~/minecraft/config)
+If available move `permissions.json` into the server config path (`~/minecraft/server/default/config`).
+```bash
+cp permissions.json ~/minecraft/server/default/config/
+```
 
-`cp system.properties ~/minecraft/config/`
+If available move `whitelist.json` (is required if file `system.properties` contains `white-list=true`).
+```bash
+mv whitelist.json ~/minecraft/server/default/config/
+```
 
-If available copy `permissions.json`.
+#### Create docker container
 
-`cp permissions.json ~/minecraft/config/`
+```bash
+sudo docker create -ti --name=minecraft-default-${USER} -v "${HOME}/minecraft/server/default/config:/srv/bedrock-server/config" -v "${HOME}/minecraft/worlds:/srv/bedrock-server/worlds" -p 19132:19132/udp -p 80:8080 minecraft-bedrock
+```
 
-If available or required because of property (`system.properties`) `white-list=true`.
+Or use `docker compose` this uses `docker-compose.yaml` to build the image. Later it uses the file to configure the container.
 
-`cp whitelist.json ~/minecraft/config`
-
-#### Create docker image
-
-`sudo docker create -ti --name=minecraft-${USER} -v "${HOME}/minecraft/config:/srv/bedrock-server/config:/srv/bedrock-server/config" -v "${HOME}/minecraft/config:/srv/bedrock-server/worlds:/srv/bedrock-server/worlds" -p 19132:19132/udp -p 80:8080  minecraft-bedrock`
+```bash
+sudo docker compose build
+```
 
 ### Start
 
-`sudo docker start minecraft-${USER}`
+```bash
+sudo docker start minecraft-${USER}
+```
+
+Or use `docker compose`
+
+```bash
+sudo docker compose up -d
+```
 
 ### Stop
 
-`sudo docker stop minecraft-${USER}`
+```bash
+sudo docker stop minecraft-${USER}
+```
 
-### Websocket
+Or use `docker compose`
 
-`ws://{hostname}:{port}`
+```bash
+sudo docker compose stop
+```
+
+### WebSocket
+
+```bash
+ws://{hostname}:{port}
+```
 
 ### Default web console
-
-`http://{hostname}:{port}`
+```bash
+http://{hostname}:{port}
+```
 
 Click the check button to connect.
 
-If this is the first time a websocket is created since server start. 
+If this is the first time a WebSocket is created since server start. 
 You should now see the typical server output.
 
-```
-onmessage NO LOG FILE! - setting up server logging... 
-onmessage [2020-07-09 11:46:11 INFO] Starting Server 
-onmessage [2020-07-09 11:46:11 INFO] Version 1.16.1.2 
-onmessage [2020-07-09 11:46:11 INFO] Session ID XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX 
-onmessage [2020-07-09 11:46:11 INFO] Level Name: world 
-onmessage [2020-07-09 11:46:11 ERROR] Error opening whitelist file: whitelist.json 
-onmessage [2020-07-09 11:46:11 INFO] Game mode: 0 Survival 
-onmessage [2020-07-09 11:46:11 INFO] Difficulty: 2 NORMAL 
-onmessage [2020-07-09 11:46:11 INFO] opening worlds/world/db 
-onmessage [2020-07-09 11:46:16 INFO] IPv4 supported, port: 19132 
-onmessage [2020-07-09 11:46:16 INFO] IPv6 not supported 
-onmessage [2020-07-09 11:46:16 INFO] IPv4 supported, port: 42369 
-onmessage [2020-07-09 11:46:16 INFO] IPv6 not supported 
-onmessage [2020-07-09 11:46:17 INFO] Server started. 
-```
+![alt](docs/images/server-connected-by-websocket.png)
 
 #### Example
 
 Type `stop` into the `send` panel.
 
 Now the server is stopping and the container is stopped.
-```
-onmessage [2020-07-09 14:38:09 INFO] Server stop requested. 
-onmessage [2020-07-09 14:38:09 INFO] Stopping server... 
-onmessage Quit correctly  
-```
+
+![alt](docs/images/server-stopped-by-websocket.png)
 
 ## Config Examples
 

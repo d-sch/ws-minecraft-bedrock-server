@@ -1,0 +1,11 @@
+services:
+  minecraft-server:
+    build: .
+    image: minecraft-server
+    container_name: minecraft-${USER}
+    ports:
+      - "19132:19132/udp"
+      - "80:8080"
+    volumes:
+      - "${HOME}/minecraft/server/default/config:/srv/bedrock-server/config"
+      - "${HOME}/minecraft/worlds:/srv/bedrock-server/worlds"

@@ -42,7 +42,7 @@ ENV WDS_DIR="/websocketd"
 ENV MC_SERVER_DIR="/bedrock-server"
 ENV SRV_MC_SERVER_DIR="/srv/bedrock-server"
 
-WORKDIR = ${MC_SERVER_DIR}
+WORKDIR ${MC_SERVER_DIR}
 
 RUN apt-get update && apt-get install -y libcurl4 ncat
 
@@ -50,15 +50,6 @@ COPY --from=mc ${MC_SERVER_DIR}/ .
 COPY --from=wds ${WDS_DIR}/websocketd .
 
 VOLUME ${SRV_MC_SERVER_DIR}/worlds ${SRV_MC_SERVER_DIR}/config
-
-# Create a separate folder for configurations move the original files there and create links for the files
-RUN mv ./server.properties ${SRV_MC_SERVER_DIR}/config && \
-    mv ./permissions.json ${SRV_MC_SERVER_DIR}/config && \
-    mv ./whitelist.json ${SRV_MC_SERVER_DIR}/config && \
-    ln -s ${SRV_MC_SERVER_DIR}/config/server.properties ./server.properties && \
-    ln -s ${SRV_MC_SERVER_DIR}/config/permissions.json ./permissions.json && \
-    ln -s ${SRV_MC_SERVER_DIR}/config/whitelist.json ./whitelist.json && \
-    ln -s ${SRV_MC_SERVER_DIR}/worlds ./worlds
 
 EXPOSE 19132/udp
 EXPOSE 8080

@@ -19,12 +19,12 @@ function _trap() {
 
 trap _trap SIGTERM SIGINT TERM
 
-echo "Start bedrock-server (stdin/stdout) ${BEDROCK_SERVER_PIPE_IN}/${BEDROCK_SERVER_PIPE_OUT}..."
-./bedrock_server >$BEDROCK_SERVER_PIPE_OUT <$BEDROCK_SERVER_PIPE_IN  &
-BEDROCK_SERVER_PID=$!
 echo "Start ncat (stdin/stdout) ${BEDROCK_SERVER_PIPE_OUT}/${BEDROCK_SERVER_PIPE_IN}..."
-ncat -vlk 49999 <$BEDROCK_SERVER_PIPE_OUT >$BEDROCK_SERVER_PIPE_IN  &
+ncat -vlk 49999 < $BEDROCK_SERVER_PIPE_OUT > $BEDROCK_SERVER_PIPE_IN  &
 NCAT_PID=$!
+echo "Start bedrock-server (stdin/stdout) ${BEDROCK_SERVER_PIPE_IN}/${BEDROCK_SERVER_PIPE_OUT}..."
+./bedrock_server > $BEDROCK_SERVER_PIPE_OUT < $BEDROCK_SERVER_PIPE_IN  &
+BEDROCK_SERVER_PID=$!
 echo "...bedrock-server started pid ${BEDROCK_SERVER_PID}"
 echo "Start websocketd..."
 ./websocketd --devconsole --port=8080 "./websocketd.sh" &
