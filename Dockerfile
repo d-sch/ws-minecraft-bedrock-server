@@ -15,7 +15,7 @@ FROM base AS mc
 # Download and extract the bedrock server
 RUN if [ "$VERSION" = "latest" ] ; then \
         LATEST_VERSION=$( \
-            curl -v --location --compressed --silent 'https://www.minecraft.net/en-us/download/server/bedrock/' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'User-Agent: d-sch/ws-minecraft-bedrock-server' | \
+            curl -v --location --compressed --silent 'https://net-secondary.web.minecraft-services.net/api/v1.0/download/links' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Encoding: gzip, deflate, br, zstd' -H 'User-Agent: d-sch/ws-minecraft-bedrock-server' | \
             grep -o 'https://www.minecraft.net/bedrockdedicatedserver/bin-linux/[^"]*' | \
             sed 's#.*/bedrock-server-##' | sed 's/.zip//') && \
         export VERSION=$LATEST_VERSION && \
