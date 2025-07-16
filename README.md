@@ -46,9 +46,10 @@ If available move `whitelist.json` (is required if file `system.properties` cont
 mv whitelist.json ~/minecraft/server/default/config/
 ```
 
-#### Create docker container
+#### Build image and create docker container
 
 ```bash
+sudo docker build -t minecraft-bedrock .
 sudo docker create -ti --name=minecraft-default-${USER} -v "${HOME}/minecraft/server/default/config:/srv/bedrock-server/config" -v "${HOME}/minecraft/worlds:/srv/bedrock-server/worlds" -p 19132:19132/udp -p 80:8080 minecraft-bedrock
 ```
 
